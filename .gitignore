@@ -1,0 +1,5 @@
+# Do not include OS-specific modules
+**/node_modules
+
+# Ignore original assignment descriptions
+**.pdf

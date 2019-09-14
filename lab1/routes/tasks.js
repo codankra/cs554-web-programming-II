@@ -17,6 +17,10 @@ router.get("/", async (req, res) => {
     const showamt = (que.y && que.y != '') ? Number(que.y) : 20; //default show <UP TO> 20 (if 20 exist)
     if (que.y>100) throw "Number to show must not be over 100";
     const tasksList = await taskData.getAll(skipamt, showamt);
+    if(tasksList.length == 0) {
+      res.json({status: "No tasks to show. Either populate the database more, or ease your query requirements. This is not a error or failed request, just a status message."});
+      return;
+    }
     res.json(tasksList);
   } catch (e) {
     console.log(e);
@@ -25,37 +29,36 @@ router.get("/", async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
-  const userInfo = req.body;
+  const taskInfo = req.body;
 
-  if (!userInfo) {
-    res.status(400).json({ error: "You must provide data to create a user" });
+  if (!taskInfo) {
+    res.status(400).json({ error: "You must provide data to create a task" });
     return;
   }
 
-  if (!userInfo.title) {
+  if (!taskInfo.title) {
     res.status(400).json({ error: "You must provide a title" });
     return;
   }
 
-  if (!userInfo.description) {
+  if (!taskInfo.description) {
     res.status(400).json({ error: "You must provide a description" });
     return;
   }
-  if (!userInfo.hoursEstimated) {
+  if (!taskInfo.hoursEstimated) {
     res.status(400).json({ error: "You must provide an hours estimate" });
     return;
   }
-  if (userInfo.completed !== true && userInfo.completed !== false) {
-    res.status(400).json({ error: "You must provide competed as true or false" });
-    return;
+  if (taskInfo.completed !== true) {
+    taskInfo.completed = false;
   }
 
   try {
     const newUser = await taskData.create(
-      userInfo.title,
-      userInfo.description,
-      userInfo.hoursEstimated,
-      userInfo.completed
+      taskInfo.title,
+      taskInfo.description,
+      taskInfo.hoursEstimated,
+      taskInfo.completed
     );
     res.json(newUser);
   } catch (e) {
@@ -64,127 +67,128 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.put("/tasks/:id", async (req, res) => {
+router.put("/:id", async (req, res) => {
   const taskInfo = req.body;
   try {
-    await taskData.getTaskById(req.params.id);
+    await taskData.get(req.params.id);
   } catch (e) {
     res.status(404).json({error: "Task not found"});
     return;
   }
   try {
+
+    if (!taskInfo) {
+      res.status(400).json({ error: "You must provide data to create a task" });
+      return;
+    }
+  
+    if (!taskInfo.title) {
+      res.status(400).json({ error: "You must provide a title" });
+      return;
+    }
+  
+    if (!taskInfo.description) {
+      res.status(400).json({ error: "You must provide a description" });
+      return;
+    }
+    if (!taskInfo.hoursEstimated) {
+      res.status(400).json({ error: "You must provide an hours estimate" });
+      return;
+    }
+    if (taskInfo.completed !== true && taskInfo.completed !== false) {
+      res.status(400).json({ error: "You must provide a t/f completed value" });
+      return;
+    }
     const updatedTask = await taskData.updateTask(req.params.id, taskInfo);
     res.json(updatedTask);
   } catch (e) {
     console.log(e)
-    res.sendStatus(400);
+    res.sendStatus(500);
   }
 });
 
 router.patch("/:id", async (req, res) => {
+  const taskInfo = req.body;
   try {
     await taskData.get(req.params.id);
   } catch (e) {
-    res.status(404).json({ error: "User not found" });
+    res.status(404).json({error: "Task not found"});
     return;
   }
-
   try {
-    const data = await taskData.remove(req.params.id);
-    data.comments = await commentData.removeAuthor(req.params.id);
-    // const data = {
-    //   oldUser,
-    //   allComments
-    // }
-    const returnObj = {
-      "deleted": true,
-      data
+    //interrogation
+    const currentTask = await taskData.get(req.params.id);
+    if (!taskInfo) {
+      taskInfo = currentTask;
     }
-    res.json(returnObj);
+    if (!taskInfo.title) {
+      taskInfo.title = currentTask.title;
+    }
+    if (!taskInfo.description) {
+      taskInfo.description = currentTask.description;
+    }
+    if (!taskInfo.hoursEstimated) {
+      taskInfo.hoursEstimated = currentTask.hoursEstimated;
+    }
+    if (!taskInfo.completed) {
+      taskInfo.completed = currentTask.completed;
+    }
+    const updatedTask = await taskData.updateTask(req.params.id, taskInfo);
+    res.json(updatedTask);
   } catch (e) {
-    console.log(e);
+    console.log(e)
     res.sendStatus(500);
-    return;
   }
 });
 
-router.patch("/:id", async (req, res) => {
+router.post("/:id", async (req, res) => {
+  const commentInfo = req.body;
   try {
     await taskData.get(req.params.id);
   } catch (e) {
-    res.status(404).json({ error: "User not found" });
+    res.status(404).json({error: "Task not found"});
     return;
   }
 
+  if (!commentInfo) {
+    res.status(400).json({ error: "You must provide data to create a comment" });
+    return;
+  }
+
+  if (!commentInfo.name) {
+    res.status(400).json({ error: "You must provide a name" });
+    return;
+  }
+
+  if (!commentInfo.comment) {
+    res.status(400).json({ error: "You must provide a comment comment" });
+    return;
+  }
   try {
-    const data = await taskData.remove(req.params.id);
-    data.comments = await commentData.removeAuthor(req.params.id);
-    // const data = {
-    //   oldUser,
-    //   allComments
-    // }
-    const returnObj = {
-      "deleted": true,
-      data
-    }
-    res.json(returnObj);
+    const newCommentAdded = await taskData.addCommentToTask(
+      req.params.id,
+      commentInfo.name,
+      commentInfo.comment
+    );
+    res.json(newCommentAdded);
   } catch (e) {
     console.log(e);
     res.sendStatus(500);
-    return;
-  }
-});
-
-router.patch("/:id/comments", async (req, res) => {
-  try {
-    await taskData.get(req.params.id);
-  } catch (e) {
-    res.status(404).json({ error: "User not found" });
-    return;
-  }
-
-  try {
-    const data = await taskData.remove(req.params.id);
-    data.comments = await commentData.removeAuthor(req.params.id);
-    // const data = {
-    //   oldUser,
-    //   allComments
-    // }
-    const returnObj = {
-      "deleted": true,
-      data
-    }
-    res.json(returnObj);
-  } catch (e) {
-    console.log(e);
-    res.sendStatus(500);
-    return;
   }
 });
 
 router.delete("/:taskId/:commentId", async (req, res) => {
   try {
-    await taskData.get(req.params.id);
+    await taskData.get(req.params.taskId);
   } catch (e) {
-    res.status(404).json({ error: "User not found" });
+    res.status(404).json({ error: "Task not found by id" });
     return;
   }
-
   try {
-    const data = await taskData.remove(req.params.id);
-    data.comments = await commentData.removeAuthor(req.params.id);
-    // const data = {
-    //   oldUser,
-    //   allComments
-    // }
-    const returnObj = {
-      "deleted": true,
-      data
-    }
-    res.json(returnObj);
+    await taskData.removeCommentFromTask(req.params.taskId, req.params.commentId);
+    res.status(200).json({ status: "comment successfully deleted" });
   } catch (e) {
-    console.log(e);
-    res.sendStatus(500);
+    res.status(500).json(e);
     return;
   }
 });

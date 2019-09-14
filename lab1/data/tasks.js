@@ -59,22 +59,11 @@ module.exports = {
         const taskCollection = await tasks();
         const task = await taskCollection.findOne({ _id: ObjectID(id) });
         if (task === null) throw "There is no task with that id.";
-    
+
         return task;
-      },
-    async remove(id) {
-        if (!id) throw "You must provide an id to remove";
-        isValidObjectID(id);
-        const taskByID = await this.get(id);
-        const taskCollection = await tasks();
-        const deletionInfo = await taskCollection.removeOne(taskByID);
-    
-        if (deletionInfo.deletedCount === 0) {
-          throw `Could not remove task with id of ${id}`;
-        }
-        return taskByID;
     },
     async updateTask(id, taskInfo) {
+      isValidObjectID(id);
       const updatedData = {
       title: taskInfo.title,
       description: taskInfo.description,
@@ -84,86 +73,48 @@ module.exports = {
       const taskCollection = await tasks();
       
       const updatedInfo = await taskCollection.updateOne({
-      _id: id
+      _id: ObjectID(id)
       }, {
       $set: updatedData
       });
       if (updatedInfo.matchedCount === 0) {
       throw "Task to update not found";
       }
-      return await this.getTaskById(id);
+      return await this.get(id);
     },
-    async updateOne(id, aData) {
-        if (!id) 
-            throw "You must provide an id to search for";
-        isValidObjectID(id);
-        const taskCollection = await tasks();
-        if (aData.newName){
-            isString(aData.newName);
-            const updatedInfo = await taskCollection.updateOne({ _id: ObjectID(id) }, {$set : {"name": aData.newName}});
-            if (updatedInfo.modifiedCount === 0) {
-                throw "could not rename task successfully or new name is same as old name.";
-            }
+    async addCommentToTask(taskId, commentName, commentComment) {
+      isValidObjectID(taskId);
+      const taskCollection = await tasks();
+      const updatedInfo = await taskCollection.updateOne({ _id: ObjectID(taskId) }, {
+        $addToSet: {
+          comments: { 
+            _id: new ObjectID(),
+            name: commentName, 
+            comment: commentComment 
+          }
         }
-        if (aData.newDescription){
-            isString(aData.newDescription);
-            const updatedInfo = await taskCollection.updateOne({ _id: ObjectID(id) }, {$set : {"taskType": aData.newDescription}});
-            if (updatedInfo.modifiedCount === 0) {
-                throw "could not retype task successfully or new type is same as old type.";
-            }
+      });
+        if (updatedInfo.modifiedCount === 0) {
+            throw "could not add comment successfully";
         }
-
     
-        return await this.get(id);
+        return await this.get(taskId);
+      
     },
-    async updateAll(id, aData) {
-        if (!id) 
-            throw "You must provide an id to search for";
-        isValidObjectID(id);
-        const taskCollection = await tasks();
-        if (aData.newName){
-            isString(aData.newName);
-            const updatedInfo = await taskCollection.updateOne({ _id: ObjectID(id) }, {$set : {"name": aData.newName}});
-            if (updatedInfo.modifiedCount === 0) {
-                throw "could not rename task successfully or new name is same as old name.";
-            }
-        }
-        if (aData.newType){
-            isString(aData.newType);
-            const updatedInfo = await taskCollection.updateOne({ _id: ObjectID(id) }, {$set : {"taskType": aData.newType}});
-            if (updatedInfo.modifiedCount === 0) {
-                throw "could not retype task successfully or new type is same as old type.";
-            }
-        }
-        return await this.get(id);
-    },
-    addCommentToUser(userId, commentId, commentTitle) {
-        return this.getUserById(id).then(currentUser => {
-          return userCollection.updateOne(
-            { _id: id },
-            {
-              $addToSet: {
-                comments: {
-                  id: commentId,
-                  title: commentTitle
-                }
-              }
-            }
-          );
-        });
-      },
-      removeCommentFromUser(userId, commentId) {
-        return this.getUserById(id).then(currentUser => {
-          return userCollection.updateOne(
-            { _id: id },
-            {
-              $pull: {
-                comments: {
-                  id: commentId
-                }
-              }
-            }
-          );
-        });
+    async removeCommentFromTask(taskId, commentId) {
+      isValidObjectID(taskId);
+      isValidObjectID(commentId);
+      const taskCollection = await tasks();
+      var updatedInfo;
+      try{
+        updatedInfo = await taskCollection.updateOne({ _id: ObjectID(taskId) }, {$pull : {comments: { _id: ObjectID(commentId) }}});
+      }catch(e){
+        console.log(e);
       }
+      if (updatedInfo.modifiedCount === 0) {
+          throw "could not remove comment successfully, did its id ever exist?";
+      }
+  
+      return;
+    }
 };

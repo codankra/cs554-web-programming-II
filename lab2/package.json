@@ -1,0 +1,28 @@
+{
+  "name": "kramer_daniel_cs554_lab2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "build": "gulp build"
+  },
+  "author": "Daniel Kramer 10426217",
+  "license": "ISC",
+  "devDependencies": {
+    "bootstrap": "^4.3.1",
+    "gulp": "^4.0.2",
+    "gulp-autoprefixer": "^3.1.1",
+    "gulp-clean-css": "^4.2.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-rename": "^1.4.0",
+    "gulp-sass": "^2.3.2",
+    "gulp-sourcemaps": "^1.12.1",
+    "jquery": "^3.4.1",
+    "popper.js": "^1.15.0"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "node-sass": "^4.12.0"
+  }
+}

@@ -1,0 +1,15 @@
+The Audiobook Transcripter - an audiobook you can read anywhere! Listen with your mind!
+The DK Instant-dial - Instantly compatable with any phone - just type in my number to contact me, instantly!
+The Burnout - Tired and unable to think of creative products? Use this as one of them!
+The Modal - Used on this very page, "unlocks" an exclusive longer description for all products!
+I Tried... - to be preposturous for this assignment but product invention is not my forte.
+The Point of CS... - for me is to help explore other career paths that allow me to be creative in a different kind of way.
+This Assignment... - is good an all with the introduction to bootstrap, sass, gulp, etc. but
+The Peak Difficulty... - of the assignment for me is coming up with the products XD.
+A Good Thing... is that I am almost done with creating fake products.
+The Final Product... is the completed website and the end of this preposturousness.
+
+
+
+Modal - Congratulations, you have unlocked a longer description :) 
+This product has won the award/honor of being listed on my website.

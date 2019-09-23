@@ -3,3 +3,6 @@
 
 # Ignore original assignment descriptions
 **.pdf
+
+# Ignore compressed submissions
+**.zip

@@ -57,9 +57,9 @@ class Pokemon extends Component {
     } else if (this.state.data !== undefined) {
       let img = null;
       if (this.state.data.sprites.front_default) {
-        img = <img alt="Show" src={this.state.data.sprites.front_default} />;
+        img = <img alt="Pokemon" src={this.state.data.sprites.front_default} />;
       } else {
-        img = <img alt="Show" src={noImage} />;
+        img = <img alt="Pokemon" src={noImage} />;
       }
       body = (
         <div>

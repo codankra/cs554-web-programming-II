@@ -8,8 +8,8 @@ class BerriesContainer extends Component {
     return (
       <div>
         <Switch>
-          <Route path="/machines/:id" exact component={MachinesList} />
-          <Route path="/machines/page/:page" exact component={Machines} />
+          <Route path="/machines/page/:page" exact component={MachinesList} />
+          <Route path="/machines/:id" exact component={Machines} />
         </Switch>
       </div>
     );

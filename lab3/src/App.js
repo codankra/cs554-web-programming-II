@@ -4,6 +4,7 @@ import "./App.css";
 import PokemonContainer from "./components/PokemonContainer";
 import BerriesContainer from "./components/BerriesContainer";
 import MachinesContainer from "./components/MachinesContainer";
+import P404 from "./components/P404";
 
 import { BrowserRouter as Router, Route, Link, Switch} from "react-router-dom";
 
@@ -40,6 +41,7 @@ class App extends Component {
             <Route path="/pokemon" component={PokemonContainer} />
             <Route path="/berries" component={BerriesContainer} />
             <Route path="/machines" component={MachinesContainer} />
+            <Route path="/" component={P404} />
           </Switch>
           </div>
         </div>

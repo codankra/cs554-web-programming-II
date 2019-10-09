@@ -35,6 +35,7 @@ class App extends Component {
             </Link>
             <p>Machines (ex. TMs and HMs) are used to teach pokemon new moves.</p>
           </div>
+          <hr></hr>
           <Switch>
             <Route path="/pokemon" component={PokemonContainer} />
             <Route path="/berries" component={BerriesContainer} />

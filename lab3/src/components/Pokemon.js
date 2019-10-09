@@ -6,14 +6,15 @@ class Pokemon extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      results: undefined,
-      loading: false
+      data: undefined,
+      loading: false,
+      error: false
     };
   }
   componentWillMount() {
-    this.getShow();
+    this.getPoke();
   }
-  async getShow() {
+  async getPoke() {
     this.setState({
       loading: true
     });
@@ -23,21 +24,26 @@ class Pokemon extends Component {
       );
       console.log(response);
       this.setState({
-        data: response.results,
+        data: response.data,
         loading: false
       });
     } catch (e) {
       console.log(`error ${e}`);
+      this.setState({
+        data: undefined,
+        error: true,
+        loading: false
+      });
+
     }
   }
   render() {
     let body = null;
-    const regex = /(<([^>]+)>)/gi;
-    let summary = this.state.data && this.state.data.summary.replace(regex, "");
+    //const regex = /(<([^>]+)>)/gi;
     if (this.state.loading) {
       body = (
         <div>
-          <h1>Shows</h1>
+          <h1>Pokemon</h1>
           <br />
           Loading...
         </div>
@@ -45,13 +51,13 @@ class Pokemon extends Component {
     } else if (this.state.error) {
       body = (
         <div>
-          <h1>{this.state.error}</h1>
+          <p>404 PAGE (ALL CAPS SO IT IT OBVIOUS) GO BACK TO THE SITE USING ONE OF THE ABOVE LINKS</p>
         </div>
-      );
-    } else {
+        );
+    } else if (this.state.data !== undefined) {
       let img = null;
-      if (this.state.data.image) {
-        img = <img alt="Show" src={this.state.data.image.medium} />;
+      if (this.state.data.sprites.front_default) {
+        img = <img alt="Show" src={this.state.data.sprites.front_default} />;
       } else {
         img = <img alt="Show" src={noImage} />;
       }
@@ -64,27 +70,48 @@ class Pokemon extends Component {
           <br />
           <br />
           <p>
-            Average Rating: {this.state.data.rating.average}
+            Base Experience: {this.state.data.base_experience}
             <br />
-            Network: {this.state.data.network &&
-              this.state.data.network.name}{" "}
+            Height: {this.state.data.height}
             <br />
-            Language: {this.state.data.language}
+            Order: {this.state.data.order}
             <br />
-            Runtime: {this.state.data.runtime}
-            <br />
-            Premiered: {this.state.data.premiered}
+            Weight: {this.state.data.weight}
             <br />
           </p>
-          <b>Genres</b>:
+          <b>Types</b>:
           <ul className="list-unstyled">
-            {this.state.data.genres.map(genre => {
-              return <li key={genre}>{genre}</li>;
+            {this.state.data && this.state.data.types.map(type => {
+              return <li key={type.slot}>{type.type.name}</li>;
             })}
           </ul>
-          <p>Summary: {summary}</p>
+          <b>Base Stats</b>:
+          <ul className="list-unstyled">
+            {this.state.data && this.state.data.stats.map(stat => {
+              return <li key={stat.stat.name}>{stat.stat.name}: {stat.base_stat}</li>;
+            })}
+          </ul>
+          <b>Abilities</b>:
+          <ul className="list-unstyled">
+            {this.state.data.abilities.map(ability => {
+              return <li key={ability.slot}>{ability.ability.name}</li>;
+            })}
+          </ul>
+          <b>Moves</b>:
+          <ul className="list-unstyled">
+            {this.state.data && this.state.data.moves.map(move => {
+              return <li key={move.move.name}>{move.move.name}</li>;
+            })}
+          </ul>
+          
         </div>
       );
+    } else{
+      body = (
+        <div>
+          <p>404 PAGE (ALL CAPS SO IT IT OBVIOUS) GO BACK TO THE SITE USING ONE OF THE ABOVE LINKS</p>
+        </div>
+        );
     }
     return body;
   }

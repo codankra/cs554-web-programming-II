@@ -33,8 +33,11 @@ class PokemonList extends Component {
   }
   async getPoke(page) {
     try {
-      const response = await axios.get(`https://pokeapi.co/api/v2/pokemon?offset=${page * 20}`);
-      this.setState({ data: response.data });
+      const offset = page*20;
+      const response = await axios.get(`https://pokeapi.co/api/v2/pokemon?offset=${offset}`);
+      if (offset>=0 && offset<response.data.count){
+        this.setState({ data: response.data });
+      }
     } catch (e) {
       console.log(e);
       //J-Boy: Stacks and Queues EB2 # 1 and 2 (get and release turn)
@@ -44,11 +47,11 @@ class PokemonList extends Component {
     let body = null;
     let li = null;
     let pCount = null;
+    let buttons = null;
     if (this.state.data) {
       li =
         this.state.data &&
         this.state.data.results.map(pokemon => {
-
           return (
             <li key={pokemon.name}>
               <Link to={`/pokemon/${pokemon.name}`}>{pokemon.name}</Link>
@@ -57,16 +60,36 @@ class PokemonList extends Component {
         });
       pCount = this.state.data.count;
       pCount = pCount/20 -1;
-    }
-    body = (
+      if (this.state.page>0 && this.state.page<pCount) {
+        buttons = 
+        <div>
+          <button onClick={this.getPrev}>Previous</button>
+          <button onClick={this.getNext}>Next</button>
+        </div>
+      } else if(this.state.page>0){
+        buttons = 
+        <div>
+          <button onClick={this.getPrev}>Previous</button>
+        </div>
+      } else {
+        buttons = 
+        <div>
+          <button onClick={this.getNext}>Next</button>
+        </div>
+      }
+      body = (
+        <div>
+          <ul className="list-unstyled">{li}</ul>
+          {buttons}
+        </div>
+      );
+    } else { //404
+      body = (
       <div>
-        <ul className="list-unstyled">{li}</ul>
-        <button onClick={this.getPrev}>Previous</button>
-        <button onClick={this.getNext}>Next</button>
-        <p>Current Page: {pCount}</p>
+        <p>404 PAGE (ALL CAPS SO IT IT OBVIOUS) GO BACK TO THE SITE USING ONE OF THE ABOVE LINKS</p>
       </div>
-    );
-
+      );
+    }
     return body;
   }
 }

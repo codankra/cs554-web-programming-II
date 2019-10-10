@@ -3,8 +3,9 @@ class P404 extends Component {
     render() {
       return (
         <div>
-        <p>404 PAGE (ALL CAPS SO IT IT OBVIOUS) GO BACK TO THE SITE USING ONE OF THE ABOVE LINKS</p>
-      </div>
+          <h2>404</h2>
+          <p>You have accessed an invalid link on the site. Use one of the above links to get back on track!</p>
+        </div>
       );
     }
   }

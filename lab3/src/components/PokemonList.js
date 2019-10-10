@@ -16,6 +16,15 @@ class PokemonList extends Component {
   componentDidMount() {
     this.getPoke(this.props.match.params.page);
   }
+  componentDidUpdate(prevProps) {
+    // Typical usage (don't forget to compare props):
+    if (this.props.match.params.page !== prevProps.match.params.page) {
+      this.setState({
+        page: Number(this.props.match.params.page)
+      });
+      this.getPoke(this.props.match.params.page);
+    }
+  }
   async getPrev() {
     let temp = this.state.page;
     this.setState({ page: temp - 1}, () => {
@@ -32,6 +41,7 @@ class PokemonList extends Component {
     
   }
   async getPoke(page) {
+    console.log(page);
     try {
       const offset = page*20;
       const response = await axios.get(`https://pokeapi.co/api/v2/pokemon?offset=${offset}`);
@@ -40,7 +50,6 @@ class PokemonList extends Component {
       }
     } catch (e) {
       console.log(e);
-      //J-Boy: Stacks and Queues EB2 # 1 and 2 (get and release turn)
     }
   }
   render() {
@@ -86,7 +95,8 @@ class PokemonList extends Component {
     } else { //404
       body = (
       <div>
-        <p>404 PAGE (ALL CAPS SO IT IT OBVIOUS) GO BACK TO THE SITE USING ONE OF THE ABOVE LINKS</p>
+        <h2>404</h2>
+        <p>You have accessed an invalid link on the site. Use one of the above links to get back on track!</p>
       </div>
       );
     }

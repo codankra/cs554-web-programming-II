@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import logo from "./img/logo.svg";
+import logo from "./img/pika.png";
 import "./App.css";
 import PokemonContainer from "./components/PokemonContainer";
 import BerriesContainer from "./components/BerriesContainer";
@@ -22,7 +22,7 @@ class App extends Component {
           <br />
           <div className="App-body">
           <div className="Link-body">
-            <p>Welcome to the PokeAPI lab Pallette Town introduction page!</p>
+            <p>Welcome to the PokeAPI lab Pallette Town introduction page! This is a site to talk about Pokemon, Berries, and Machines.</p>
             <Link className="pokeLink" to="/pokemon/page/0">
               Pokemon Listings
             </Link>

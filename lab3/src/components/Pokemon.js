@@ -51,7 +51,8 @@ class Pokemon extends Component {
     } else if (this.state.error) {
       body = (
         <div>
-          <p>404 PAGE (ALL CAPS SO IT IT OBVIOUS) GO BACK TO THE SITE USING ONE OF THE ABOVE LINKS</p>
+          <h2>404</h2>
+            <p>You have accessed an invalid link on the site. Use one of the above links to get back on track!</p>
         </div>
         );
     } else if (this.state.data !== undefined) {
@@ -63,9 +64,9 @@ class Pokemon extends Component {
       }
       body = (
         <div>
-          <h3 className="cap-first-letter">
+          <h2 className="cap-first-letter">
             {this.state.data && this.state.data.name}
-          </h3>
+          </h2>
           {img}
           <br />
           <br />
@@ -109,6 +110,7 @@ class Pokemon extends Component {
     } else{
       body = (
         <div>
+          <h2>404</h2>
           <p>404 PAGE (ALL CAPS SO IT IT OBVIOUS) GO BACK TO THE SITE USING ONE OF THE ABOVE LINKS</p>
         </div>
         );

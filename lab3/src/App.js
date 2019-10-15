@@ -41,7 +41,8 @@ class App extends Component {
             <Route path="/pokemon" component={PokemonContainer} />
             <Route path="/berries" component={BerriesContainer} />
             <Route path="/machines" component={MachinesContainer} />
-            <Route path="/" component={P404} />
+            <Route path="/" exact component={null} />
+            <Route path="/*" component={P404} />
           </Switch>
           </div>
         </div>

@@ -43,7 +43,7 @@ const UPLOAD_IMAGE = gql`
   mutation uploadAnImage(
     $url: String!
     $description: String!
-    $posterName: Int!
+    $posterName: String!
   ) {
     uploadImage(
         url: $url,
@@ -61,24 +61,25 @@ const UPLOAD_IMAGE = gql`
 `;
 
 const UPDATE_IMAGE = gql`
-  mutation updateAnImage(
-    $id: ID!
-    $url: String
-    $posterName: String
-    $description: String
-    $user_posted: Boolean
-    $binned: Boolean
-  ) {
-    updateImage(id: $id, url: $url, posterName: $posterName, 
-    description: $description, userPosted: $user_posted, binned: $binned) {
-        id
-        url
-        poster_name
-        description
-        user_posted
-        binned
-    }
+mutation updateAnImage(
+  $id: ID!
+  $url: String
+  $posterName: String
+  $description: String
+  $userPosted: Boolean
+  $binned: Boolean
+) {
+  updateImage(id: $id, 
+    url: $url, posterName: $posterName, description: $description, user_posted: $userPosted, 
+    binned: $binned) {
+      id
+      url
+      poster_name
+      description
+      user_posted
+      binned
   }
+}
 `;
 
 const DELETE_IMAGE = gql`

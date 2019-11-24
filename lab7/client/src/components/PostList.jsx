@@ -12,60 +12,32 @@ const cssStyler = {
         width: "200px"
     }
 };
-class Home extends Component {
+class PostList extends Component {
     constructor(props) {
       super(props);
       this.state = {
-        imgBinned: false,
-        // showAddModal: false,
-        // showDeleteModal: false,
         editImage: null,
-        deleteImage: null,
-        pageNum: 1,
-        // imageList: null
+        deleteImage: 0,
       };
-    this.getMoreData = this.getMoreData.bind(this);
 
       
     }
-  
-    // }
-    // componentWillMount() {
-    //     <Query query={queries.GET_UNSPLASH_IMAGES} variables={ {pageNum: this.state.pageNum} }>
-    //     {({ data, loading, error }) => {
-    //           if (loading) return "Loading...";
-    //           if (error) return `Error! ${error.message}`;
-    //           if (!data.unsplashImages) {
-    //             return null;
-    //           }
-    //           return data.unsplashImages; //get set to this
-    //       }}
-    //     </Query>
-    //     console.log(returnable);
-    //     this.setState({
-    //         imageList: returnable.data});
-    //   }
-    getMoreData(){
-        this.setState({ pageNum: this.state.pageNum + 1 });
-    }
-    // binSwap(id){
-    //     //call updateImage with that ID
-    // }
     render() {
         return (
         <div>
-            <Query query={queries.GET_UNSPLASH_IMAGES} variables={{ pageNum: this.state.pageNum }}>
+            <Query query={queries.GET_USER_POSTED_IMAGES}>
                 {({ data, loading, error }) => {
                     if (loading) return "Loading...";
                     if (error) return `Error! ${error.message}`;
-                    if (!data.unsplashImages) {
+                    if (!data.userPostedImages) {
                     return null;
                     }
                     return (
                         <div>
-                        {data.unsplashImages.map(imagePost => {
+                        {data.userPostedImages.map(imagePost => {
                             return (
                             <div className="card" key={imagePost.id}>
+                                {console.log(imagePost)}
                                 <div className="card-img">
                                 <img src={imagePost.url} alt="Ims" style={cssStyler.imgSize}></img>
                                 </div>
@@ -92,11 +64,21 @@ class Home extends Component {
                                     {imagePost.binned ?  "Remove from" : "Add to"} Bin</button>
                                     )}
                                 </Mutation>
+                                <Mutation mutation={queries.DELETE_IMAGE}>
+                                    {(deleteImage, {data}) => (
+                                    <button onClick={() => { deleteImage({
+                                        variables: {
+                                            id: imagePost.id
+                                    }})
+                                    this.setState({deleteImage: 1});
+                                    }}>
+                                    Delete Image</button>
+                                    )}
+                                </Mutation>
                                 
                             </div>
                             );
                         })}
-                        <button onClick={this.getMoreData}>More Images</button>
                         </div>
                     );}}
             </Query>
@@ -106,4 +88,4 @@ class Home extends Component {
 }
         
   
-  export default Home;
+  export default PostList;

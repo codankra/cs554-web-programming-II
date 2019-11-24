@@ -85,19 +85,23 @@ const resolvers = {
     Query: {
         unsplashImages: async (_, args) => {
             let datable = [];
+            let binnedImages = await client.hgetallAsync("binned");
+            let resultB = convert_to_array(binnedImages);
             for (let i = 1;i<=args.pageNum;i++){
               const response = await axios.get(
                 `https://api.unsplash.com/photos?client_id=4612f5cd19e4f63eaa3ede4c7cf8c4872b58fa4a9388b1020c0488441eb9d017&page=${i}`
               );
               let ImagePostsArr = response.data.map(function (obj) {
+                let imageB = resultB.find(elem => elem.id === obj.id);
                 let ImagePostN = {
                     id: obj.id,
                     url: obj.urls.full,
                     poster_name: obj.user.name,
                     description: obj.description,
                     user_posted: false,
-                    binned: (obj.liked == "true")
+                    binned: imageB != undefined
                 }
+
                 return ImagePostN;
               });
               datable = datable.concat(ImagePostsArr);
@@ -165,28 +169,28 @@ const resolvers = {
       let returnable = [];
       if (imageP) { //in posted
         let imagePin = resultP.findIndex(elem => elem.id === args.id);
-        postedImages[imagePin] = {
+        resultP[imagePin] = {
           id: args.id,
           url: args.url ? args.url : imageP.url,
           poster_name: args.posterName ? args.posterName : imageP.url,
           description: args.description ? args.description : imageP.description,
-          user_posted: args.userPosted ? args.userPosted : imageP.user_posted,
-          binned: args.binned ? args.binned : imageP.binned
+          user_posted: args.user_posted ? args.user_posted : (imageP.user_posted == true),
+          binned: args.binned ? args.binned : (imageP.binned == true)
         };
         if (args.binned != imageP.binned){
           if (args.binned == true){
             resultB.push(imageP);
           } else if (args.binned == false) {
-            const index = resultB.findIndex(imageP);
+            const index = resultB.findIndex(elem => elem.id === args.id);
             resultB.splice(index, 1);
           }
         }
         //can finalize posted here
         let flattenedImagesP = flat(resultP); //flatten image
         await client.hmsetAsync("posted", flattenedImagesP);
-        returnable = postedImages[imagePin];
+        returnable = resultP[imagePin];
       }
-      if (imageB){ //in binned
+      if (imageB && !imageP){ //in binned
         if(args.binned != imageB.binned){
           const index = resultB.findIndex(elem => elem.id === args.id);
           resultB.splice(index, 1); 
@@ -194,14 +198,14 @@ const resolvers = {
         returnable = imageB;
         returnable.binned = (args.binned == true);
       }
-      if(!imageB){
+      if(!imageB && !imageP){
         let newImagePost = {
           id: args.id,
           url: args.url,
           poster_name: args.posterName,
           description: args.description,
-          user_posted: args.user_posted,
-          binned: args.binned
+          user_posted: (args.user_posted == true),
+          binned: (args.binned == true)
         };
         if(args.binned == true){
           resultB.push(newImagePost);
@@ -211,8 +215,11 @@ const resolvers = {
       if(resultB.length == 0) client.delAsync("binned");
       else{
         let flattenedImagesB = flat(resultB); //flatten image
+        client.delAsync("binned");
         await client.hmsetAsync("binned", flattenedImagesB); //set new data again
       }
+      returnable.user_posted = (returnable.user_posted == true);
+      
       return returnable;
     },
     deleteImage: async (_, args) => {

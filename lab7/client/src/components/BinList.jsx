@@ -12,58 +12,29 @@ const cssStyler = {
         width: "200px"
     }
 };
-class Home extends Component {
+class BinList extends Component {
     constructor(props) {
       super(props);
       this.state = {
-        imgBinned: false,
-        // showAddModal: false,
-        // showDeleteModal: false,
         editImage: null,
-        deleteImage: null,
-        pageNum: 1,
-        // imageList: null
+        deleteImage: 0,
       };
-    this.getMoreData = this.getMoreData.bind(this);
 
       
     }
-  
-    // }
-    // componentWillMount() {
-    //     <Query query={queries.GET_UNSPLASH_IMAGES} variables={ {pageNum: this.state.pageNum} }>
-    //     {({ data, loading, error }) => {
-    //           if (loading) return "Loading...";
-    //           if (error) return `Error! ${error.message}`;
-    //           if (!data.unsplashImages) {
-    //             return null;
-    //           }
-    //           return data.unsplashImages; //get set to this
-    //       }}
-    //     </Query>
-    //     console.log(returnable);
-    //     this.setState({
-    //         imageList: returnable.data});
-    //   }
-    getMoreData(){
-        this.setState({ pageNum: this.state.pageNum + 1 });
-    }
-    // binSwap(id){
-    //     //call updateImage with that ID
-    // }
     render() {
         return (
         <div>
-            <Query query={queries.GET_UNSPLASH_IMAGES} variables={{ pageNum: this.state.pageNum }}>
+            <Query query={queries.GET_BINNED_IMAGES}>
                 {({ data, loading, error }) => {
                     if (loading) return "Loading...";
                     if (error) return `Error! ${error.message}`;
-                    if (!data.unsplashImages) {
+                    if (!data.binnedImages) {
                     return null;
                     }
                     return (
                         <div>
-                        {data.unsplashImages.map(imagePost => {
+                        {data.binnedImages.map(imagePost => {
                             return (
                             <div className="card" key={imagePost.id}>
                                 <div className="card-img">
@@ -96,7 +67,6 @@ class Home extends Component {
                             </div>
                             );
                         })}
-                        <button onClick={this.getMoreData}>More Images</button>
                         </div>
                     );}}
             </Query>
@@ -106,4 +76,4 @@ class Home extends Component {
 }
         
   
-  export default Home;
+  export default BinList;

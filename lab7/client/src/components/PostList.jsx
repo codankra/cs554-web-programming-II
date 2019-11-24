@@ -66,10 +66,12 @@ class PostList extends Component {
                                 </Mutation>
                                 <Mutation mutation={queries.DELETE_IMAGE}>
                                     {(deleteImage, {data}) => (
-                                    <button onClick={() => { deleteImage({
+                                    <button onClick={() => { 
+                                    deleteImage({
                                         variables: {
                                             id: imagePost.id
-                                    }})
+                                    }});
+                                    window.location.assign("/my-posts");
                                     this.setState({deleteImage: 1});
                                     }}>
                                     Delete Image</button>

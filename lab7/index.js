@@ -223,24 +223,40 @@ const resolvers = {
       return returnable;
     },
     deleteImage: async (_, args) => {
-      let resultP = getPosted();
-      const index = resultP.findIndex(elem => elem.id === args.id); 
-      resultP.splice(index, 1); 
-      if(resultP.length == 0) client.delAsync("posted");
-      else{
-        let flattenedImages = flat(resultP); 
-        await client.hmsetAsync("posted", flattenedImages);
+      let postedImages = await client.hgetallAsync("posted");
+      let binnedImages = await client.hgetallAsync("binned");
+      let resultP = convert_to_array(postedImages);
+      let resultB = convert_to_array(binnedImages);
+      let indexP = resultP.findIndex(elem => elem.id === args.id);
+      let indexB = resultB.findIndex(elem => elem.id === args.id);
+
+      let imageP = resultP[indexP];
+      let imageB = resultB[indexB];
+
+      if(indexP >= 0){
+        resultP.splice(indexP, 1);
+        if(resultP.length>0){
+          client.delAsync("posted");
+          let flattenedImagesP = flat(resultP);
+          await client.hmsetAsync("posted", flattenedImagesP);
+        } else {
+          client.delAsync("posted");
+        }
       }
-      /*remove if also in liked */
-      let resultB = getBinned();
-      const index2 = resultB.findIndex(elem => elem.id  === args.id);
-      if (index2 >= 0) {
-        resultB.splice(index2, 1); 
+      if(indexB >= 0){
+        resultB.splice(indexB, 1);
+        if(resultB.length>0){
+          client.delAsync("binned");
+          let flattenedImagesB = flat(resultB);
+          await client.hmsetAsync("binned", flattenedImagesB);
+        } else {
+          client.delAsync("binned");
+        }
       }
-      if(resultB.length == 0) client.delAsync("binned");
-      else{
-        let flattenedImagesB = flat(resultB); //flatten image
-        await client.hmsetAsync("binned", flattenedImagesB); //set new data again
+      if(indexB >= 0 && indexP >= 0) {
+        return binnedItem;
+      } else {
+        return postedItem;
       }
     }
   }

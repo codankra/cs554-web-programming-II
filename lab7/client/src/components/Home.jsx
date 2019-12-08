@@ -9,7 +9,8 @@ import queries from "../queries";
 const cssStyler = {
     imgSize: {
         height: "200px",
-        width: "200px"
+        width: "200px",
+        marginTop: "50px"
     }
 };
 class Home extends Component {
@@ -96,7 +97,11 @@ class Home extends Component {
                             </div>
                             );
                         })}
+                        <br />
+                        <br />
                         <button onClick={this.getMoreData}>More Images</button>
+                        <br />
+                        <br />
                         </div>
                     );}}
             </Query>

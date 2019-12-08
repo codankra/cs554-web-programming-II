@@ -1,0 +1,25 @@
+{
+  "name": "lab6",
+  "author": "Daniel Kramer 10426217",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "dependencies": {
+    "@types/body-parser": "^1.17.1",
+    "@types/express": "^4.17.1",
+    "@types/mongodb": "^3.3.7",
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "mongod": "^2.0.0",
+    "mongodb": "^3.3.2",
+    "node-uuid": "^1.4.8",
+    "ts-node": "^8.4.1",
+    "typescript": "^3.6.4"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "ts-node app.ts"
+  },
+  "license": "ISC"
+}

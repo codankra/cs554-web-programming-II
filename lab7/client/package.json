@@ -1,5 +1,6 @@
 {
   "name": "client",
+  "author": "Daniel Kramer 10426217",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

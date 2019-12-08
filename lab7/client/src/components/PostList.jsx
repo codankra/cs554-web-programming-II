@@ -9,7 +9,8 @@ import queries from "../queries";
 const cssStyler = {
     imgSize: {
         height: "200px",
-        width: "200px"
+        width: "200px",
+        marginTop: "50px"
     }
 };
 class PostList extends Component {
@@ -25,6 +26,9 @@ class PostList extends Component {
     render() {
         return (
         <div>
+            <button type="button" onClick={() => { window.location.assign("/new-post");}}>
+            Post an image
+            </button>
             <Query query={queries.GET_USER_POSTED_IMAGES}>
                 {({ data, loading, error }) => {
                     if (loading) return "Loading...";
